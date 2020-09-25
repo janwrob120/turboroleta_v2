@@ -58,7 +58,7 @@ void PowerSupply:: off()
         delay(1);
       }
       motor.stop();
-      motor.rotate_right(); // loosing rope
+      motor.rotate_right(); //loosing rope
       delay(400);
       motor.stop();
       power.off();

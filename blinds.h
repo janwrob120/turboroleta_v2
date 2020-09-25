@@ -36,7 +36,7 @@ class Blinds
     Motor motor;
     PowerSupply power;
     bool closed=0;
-    String open_hour = "00:00";
+    String open_hour = "09:00";
     String close_hour = "00:00";
     String current_time;
     unsigned long last_trial_time = 0; // storing last moment of open attempt
