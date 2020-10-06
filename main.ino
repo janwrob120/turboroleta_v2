@@ -23,7 +23,6 @@ PubSubClient mqtt(client);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
-bool MQTTstat=0;
 unsigned long prev_timer=0;
 unsigned long timer=0;
 String NTP_time;
@@ -78,9 +77,6 @@ void setup()
 
     timeClient->begin();
     mqtt.setServer(broker, 1885);
-    MQTTstat = mqttConnect();
-    
-
     
 }
 
