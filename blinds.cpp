@@ -104,9 +104,6 @@ void PowerSupply:: off()
 
   void Blinds:: manage()
   {
-  timeClient->update();
-  current_time=timeClient->getFormattedTime();
-  current_time = current_time.substring(0,5); //cutting out only hh:mm 
 
   if(open_hour!=close_hour) //if openhour = closehour => don't close/open
   {
