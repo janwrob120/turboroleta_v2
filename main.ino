@@ -13,16 +13,17 @@
 const char *ssid     = "internety";
 const char *password = "fffiiittt";
 const char *broker = "192.168.1.110";
-const char *topic = "room_Jan_synchronized";
+const char *module_name="room_Jan";
+const char *send_topic = "data/room_Jan";
+
 
 
 WiFiUDP ntpUDP;
-NTPClient *timeClient = new NTPClient(ntpUDP, "europe.pool.ntp.org", 7200, 60000); //3600 czas zimowy; 7200 czas letni
+NTPClient *timeClient = new NTPClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000); //3600 czas zimowy; 7200 czas letni
 WiFiClient client; 
 PubSubClient mqtt(client);
-long lastMsg = 0;
-char msg[50];
-int value = 0;
+
+
 unsigned long prev_timer=0;
 unsigned long timer=0;
 String NTP_time;
@@ -38,7 +39,7 @@ boolean mqttConnect()
     Serial.print(broker);
 
     // Connect to MQTT Broker
-    boolean status = mqtt.connect("esp32_room1");
+    boolean status = mqtt.connect(module_name);
 
     if (status == false)
     {
@@ -47,7 +48,8 @@ boolean mqttConnect()
     }
     
     mqtt.setCallback(receive_msg);
-    mqtt.subscribe("control/room_Jan_synchronized/device_blinds");
+    mqtt.subscribe("control/room_Jan/device_blinds");
+    mqtt.subscribe("control/room_Jan/device_lamp");
     
     Serial.println(" success");
     return mqtt.connected();
@@ -129,9 +131,10 @@ void loop()
                 " sensor_desktop "+String(desktop)+
                 " device_blinds "+String(blinds_opened)+
                 " device_lamp "+ String(lamp);
-                mqtt.publish(topic, data.c_str());
+                mqtt.publish(send_topic, data.c_str());
             }
-/*
+
+            Serial.println("===================================");
             Serial.print("light: ");
             Serial.println(light);
             Serial.print("temp: ");
@@ -141,7 +144,7 @@ void loop()
             Serial.print("lamp: ");
             Serial.println(lamp);
             Serial.print("blinds: ");
-            Serial.println(blinds_opened);*/
+            Serial.println(blinds_opened);
 
         }
     }
@@ -158,17 +161,17 @@ void receive_msg(char *topic, byte *payload, unsigned int length)
 {
     Serial.println("===msg arrived===");
 
-    if(strcmp(topic,"control/room_Jan_synchronized/device_blinds")==0)
+    if(strcmp(topic,"control/room_Jan/device_blinds")==0)
     {
         Serial.println("Blinds control");
         if((char)payload[0]=='0')
         {
-            Serial.println("close");
+            Serial.println("closing blinds");
             blinds.close(1);
         }
         if((char)payload[0]=='1')
         {
-            Serial.println("open");
+            Serial.println("opening blinds");
             blinds.open(1);
         }
     } 
