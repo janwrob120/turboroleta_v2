@@ -47,7 +47,7 @@ boolean mqttConnect()
     }
     
     mqtt.setCallback(receive_msg);
-    mqtt.subscribe("blinds_control");
+    mqtt.subscribe("control/room_Jan_synchronized/device_blinds");
     
     Serial.println(" success");
     return mqtt.connected();
@@ -131,7 +131,7 @@ void loop()
                 " device_lamp "+ String(lamp);
                 mqtt.publish(topic, data.c_str());
             }
-
+/*
             Serial.print("light: ");
             Serial.println(light);
             Serial.print("temp: ");
@@ -141,7 +141,7 @@ void loop()
             Serial.print("lamp: ");
             Serial.println(lamp);
             Serial.print("blinds: ");
-            Serial.println(blinds_opened);
+            Serial.println(blinds_opened);*/
 
         }
     }
@@ -156,12 +156,20 @@ void loop()
 
 void receive_msg(char *topic, byte *payload, unsigned int length)
 {
-    if((char)payload[0]=='1')
+    Serial.println("===msg arrived===");
+
+    if(strcmp(topic,"control/room_Jan_synchronized/device_blinds")==0)
     {
-        blinds.close(1);
-    }
-    if((char)payload[0]=='0')
-    {
-        blinds.open(1);
-    }
+        Serial.println("Blinds control");
+        if((char)payload[0]=='0')
+        {
+            Serial.println("close");
+            blinds.close(1);
+        }
+        if((char)payload[0]=='1')
+        {
+            Serial.println("open");
+            blinds.open(1);
+        }
+    } 
 }
